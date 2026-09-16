@@ -69,3 +69,4 @@ feature/* -> dev -> main
 - `feature/*`: nhánh cho từng chức năng.
 
 Không code trực tiếp trên `main`.
+# ncf-bedrock-be
