@@ -11,6 +11,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
@@ -26,19 +28,19 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<ApiResponse<Void>> handleValidationException(MethodArgumentNotValidException ex) {
-    String message = Objects.requireNonNull(ex.getBindingResult().getFieldError()).getDefaultMessage();
+  public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationException(MethodArgumentNotValidException ex) {
+    Map<String, String> errors = extractFieldErrors(ex);
     return ResponseEntity
             .badRequest()
-            .body(ApiResponse.error(HttpStatus.BAD_REQUEST.value(), message));
+            .body(ApiResponse.error(HttpStatus.BAD_REQUEST.value(), ErrorMessage.BAD_REQUEST, errors));
   }
 
   @ExceptionHandler(BindException.class)
-  public ResponseEntity<ApiResponse<Void>> handleBindException(BindException ex) {
-    String message = Objects.requireNonNull(ex.getBindingResult().getFieldError()).getDefaultMessage();
+  public ResponseEntity<ApiResponse<Map<String, String>>> handleBindException(BindException ex) {
+    Map<String, String> errors = extractFieldErrors(ex);
     return ResponseEntity
             .badRequest()
-            .body(ApiResponse.error(HttpStatus.BAD_REQUEST.value(), message));
+            .body(ApiResponse.error(HttpStatus.BAD_REQUEST.value(), ErrorMessage.BAD_REQUEST, errors));
   }
 
   @ExceptionHandler(AccessDeniedException.class)
@@ -54,5 +56,13 @@ public class GlobalExceptionHandler {
     return ResponseEntity
             .internalServerError()
             .body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), ErrorMessage.ERR_EXCEPTION_GENERAL));
+  }
+
+  private Map<String, String> extractFieldErrors(BindException ex) {
+    Map<String, String> errors = new LinkedHashMap<>();
+    ex.getBindingResult().getFieldErrors().forEach(error ->
+            errors.put(error.getField(), Objects.requireNonNullElse(error.getDefaultMessage(), ErrorMessage.BAD_REQUEST))
+    );
+    return errors;
   }
 }

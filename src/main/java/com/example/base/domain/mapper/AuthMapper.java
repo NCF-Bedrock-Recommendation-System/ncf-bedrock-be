@@ -14,6 +14,7 @@ public class AuthMapper {
             user.getPhone(),
             user.getEmail(),
             user.getRole(),
+            user.getStatus(),
             user.getEnabled(),
             user.getCreatedAt()
     );

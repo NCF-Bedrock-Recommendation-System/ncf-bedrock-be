@@ -8,9 +8,15 @@ public final class SuccessMessage {
         private Auth() {}
 
         public static final String REGISTER_SUCCESS = "Đăng ký tài khoản thành công.";
+        public static final String VERIFY_OTP_SUCCESS = "Xác thực OTP thành công.";
+        public static final String RESEND_OTP_SUCCESS = "Gửi lại OTP thành công.";
         public static final String LOGIN_SUCCESS = "Đăng nhập thành công.";
         public static final String LOGOUT_SUCCESS = "Đăng xuất thành công.";
         public static final String REFRESH_TOKEN_SUCCESS = "Cấp phát access token thành công.";
+        public static final String OAUTH_LOGIN_SUCCESS = "Đăng nhập OAuth thành công.";
+        public static final String FORGOT_PASSWORD_SUCCESS = "Gửi OTP quên mật khẩu thành công.";
+        public static final String VERIFY_RESET_OTP_SUCCESS = "Xác thực OTP reset mật khẩu thành công.";
+        public static final String RESET_PASSWORD_SUCCESS = "Đổi mật khẩu thành công.";
     }
 
     public static final class User {

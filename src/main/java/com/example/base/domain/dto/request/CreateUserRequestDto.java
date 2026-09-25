@@ -29,8 +29,8 @@ public record CreateUserRequestDto(
         @Schema(description = "Mật khẩu", example = "User123@")
         @NotBlank(message = "Mật khẩu không được để trống.")
         @Pattern(
-                regexp = "^(?=.*[0-9])(?=.*[a-z])(?=\\S+$).{8,}$",
-                message = "Mật khẩu tối thiểu 8 ký tự, có chữ thường và số."
+                regexp = "^(?=.*[A-Z])(?=.*[^A-Za-z0-9])(?=\\S+$).{6,}$",
+                message = "Mật khẩu phải có từ 6 ký tự trở lên, bao gồm ký tự in hoa và ký tự đặc biệt."
         )
         String password,
 

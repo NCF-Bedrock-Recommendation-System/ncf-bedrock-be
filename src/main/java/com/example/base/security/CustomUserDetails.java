@@ -1,6 +1,7 @@
 package com.example.base.security;
 
 import com.example.base.domain.entity.User;
+import com.example.base.domain.entity.UserStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -43,7 +44,7 @@ public class CustomUserDetails implements UserDetails {
 
   @Override
   public boolean isEnabled() {
-    return Boolean.TRUE.equals(user.getEnabled());
+    return Boolean.TRUE.equals(user.getEnabled()) && UserStatus.ACTIVE.equals(user.getStatus());
   }
 
   public User getUser() {

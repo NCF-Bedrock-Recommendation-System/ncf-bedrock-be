@@ -39,6 +39,10 @@ public class User {
     @Column(nullable = false, length = 20)
     private Role role;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30)
+    private UserStatus status;
+
     @Builder.Default
     @Column(nullable = false)
     private Boolean enabled = true;
@@ -53,6 +57,9 @@ public class User {
     void prePersist() {
         if (role == null) {
             role = Role.USER;
+        }
+        if (status == null) {
+            status = UserStatus.ACTIVE;
         }
         if (enabled == null) {
             enabled = true;
