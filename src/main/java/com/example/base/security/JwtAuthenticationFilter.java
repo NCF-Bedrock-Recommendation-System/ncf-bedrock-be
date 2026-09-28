@@ -2,9 +2,6 @@ package com.example.base.security;
 
 import com.example.base.common.response.ApiResponse;
 import com.example.base.constant.CommonConstant;
-import com.example.base.constant.ErrorMessage;
-import com.example.base.repository.InvalidatedTokenRepository;
-import com.nimbusds.jwt.SignedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -24,7 +21,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.text.ParseException;
 
 @Slf4j
 @Component
@@ -36,7 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   UserDetailsService userDetailsService;
 
-  InvalidatedTokenRepository invalidatedTokenRepository;
+  ObjectMapper objectMapper;
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -51,19 +47,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     String token = authHeader.substring(CommonConstant.BEARER_PREFIX.length());
-
-    try {
-      SignedJWT signedJWT = SignedJWT.parse(token);
-      String jwtId = signedJWT.getJWTClaimsSet().getJWTID();
-
-      if (invalidatedTokenRepository.existsById(jwtId)) {
-        sendErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, ErrorMessage.Auth.ERR_TOKEN_INVALIDATED);
-        return;
-      }
-    } catch (ParseException e) {
-        sendErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, ErrorMessage.Auth.ERR_MALFORMED_TOKEN);
-      return;
-    }
 
     String email = jwtProvider.extractEmail(token);
 
@@ -89,7 +72,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     ApiResponse<Object> restData = ApiResponse.error(status, message);
 
-    ObjectMapper mapper = new ObjectMapper();
-    mapper.writeValue(response.getOutputStream(), restData);
+    objectMapper.writeValue(response.getOutputStream(), restData);
   }
 }

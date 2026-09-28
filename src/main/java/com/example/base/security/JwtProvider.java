@@ -3,7 +3,6 @@ package com.example.base.security;
 import com.example.base.domain.entity.User;
 import com.example.base.constant.ErrorMessage;
 import com.example.base.exception.nonRetryException.BadRequestException;
-import com.example.base.repository.InvalidatedTokenRepository;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -34,8 +33,6 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class JwtProvider {
-
-  InvalidatedTokenRepository invalidatedTokenRepository;
 
   @NonFinal
   @Value("${jwt.secret}")
@@ -90,9 +87,7 @@ public class JwtProvider {
 
   public boolean isTokenValid(String token, UserDetails userDetails) {
     final String username = extractUsername(token);
-    final String jwtId = extractTokenId(token);
-    boolean isInvalidated = invalidatedTokenRepository.existsById(jwtId);
-    return (username.equals(userDetails.getUsername())) && !isTokenExpired(token) && !isInvalidated;
+    return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
   }
 
   public boolean isTokenExpired(String token) {

@@ -1,6 +1,6 @@
 # NCKH Backend
 
-Base backend Spring Boot cho dự án NCKH, dựng theo style code của Lockly.
+Base backend Spring Boot cho dự án NCKH
 
 ## Tech Stack
 

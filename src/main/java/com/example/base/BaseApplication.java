@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Profile;
 
 import com.example.base.domain.entity.User;
 import com.example.base.domain.entity.Role;
+import com.example.base.domain.entity.UserStatus;
 
 import com.example.base.config.UserInfoProperties;
 import com.example.base.repository.UserRepository;
@@ -50,6 +51,7 @@ public class BaseApplication {
 						.phone(userInfo.getPhone())
 						.fullName(userInfo.getFullName())
 						.role(Role.ADMIN)
+						.status(UserStatus.ACTIVE)
 						.enabled(true)
 						.build();
 				userRepository.save(admin);
