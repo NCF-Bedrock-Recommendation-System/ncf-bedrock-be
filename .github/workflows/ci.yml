@@ -14,6 +14,31 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: nckh_be
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -28,4 +53,14 @@ jobs:
         run: chmod +x ./mvnw
 
       - name: Run tests
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/nckh_be
+          SPRING_DATASOURCE_USERNAME: postgres
+          SPRING_DATASOURCE_PASSWORD: postgres
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          JWT_SECRET: ci-test-secret-key-ci-test-secret-key
+          MAIL_USERNAME: ci@example.com
+          MAIL_PASSWORD: ci-mail-password
+          MAIL_FROM: ci@example.com
         run: ./mvnw test
