@@ -3,6 +3,7 @@ package com.example.base.security;
 import com.example.base.domain.entity.User;
 import com.example.base.constant.ErrorMessage;
 import com.example.base.exception.nonRetryException.BadRequestException;
+import com.example.base.exception.nonRetryException.UnauthorizedException;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -10,6 +11,7 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.AccessLevel;
@@ -103,11 +105,18 @@ public class JwtProvider {
   }
 
   private Claims extractAllClaims(String token) {
-    return Jwts
-        .parserBuilder()
-        .setSigningKey(getSignInKey())
-        .build()
-        .parseClaimsJws(token)
-        .getBody();
+    if (token == null || token.isBlank()) {
+      throw new UnauthorizedException(ErrorMessage.Auth.INVALID_REFRESH_TOKEN);
+    }
+    try {
+      return Jwts
+          .parserBuilder()
+          .setSigningKey(getSignInKey())
+          .build()
+          .parseClaimsJws(token)
+          .getBody();
+    } catch (IllegalArgumentException | JwtException ex) {
+      throw new UnauthorizedException(ErrorMessage.Auth.INVALID_REFRESH_TOKEN);
+    }
   }
 }
